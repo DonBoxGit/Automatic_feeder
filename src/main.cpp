@@ -75,7 +75,7 @@ void rotationSepatator() {
   while (true) {
     rtn_sens.tick();
     if (rtn_sens.release()) break;
-    /* Need to cheking a terminotor sensitivity */
+    /* Need to cheking a terminator sensitivity */
   }
   digitalWrite(MOTOR_RELAY_PIN, HIGH);
 }
