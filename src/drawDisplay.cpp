@@ -1,6 +1,6 @@
 #include "drawDisplay.h"
+#include "alarmTimer.h"
 
-AlarmTime  alarm_1, alarm_2;
 Menu menuState;
 DateTime time;
 LiquidCrystal_I2C *pLCD = new LiquidCrystal_I2C(DISPLAY_I2C_ADDR,

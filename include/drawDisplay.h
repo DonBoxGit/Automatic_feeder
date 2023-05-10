@@ -3,7 +3,7 @@
 
 #include <LiquidCrystal_I2C.h>
 #include "config.h"
-#include "alarmTime.h"
+#include "alarmTimer.h"
 
 extern MicroDS3231 *pRTC;
 extern LiquidCrystal_I2C *pLCD;
