@@ -3,10 +3,9 @@
  *                         ver. 1.0.0                         *
  *     Used RTC DS3231 and liquidCrystal LCD on I2C wire      *
  **************************************************************/
-#include <Arduino.h>
+
 #include <EncButton.h>
 #include <config.h>
-#include <EEPROM.h>
 #include "drawDisplay.h"
 
 /* Initialization of buttons of control */
@@ -41,8 +40,9 @@ void setup() {
   /* Get Alarm timers 1 and 2 */
   EEPROM.get(ALARM_1_ADDR, alarm_1);
   EEPROM.get(ALARM_2_ADDR, alarm_2);
-
-  /* Add function for check correct data in Timers */
+  /* Cheking time's data */
+  timeDataCheck(&alarm_1);
+  timeDataCheck(&alarm_2);
 
   /* Reading data from Control Register of RTC DS3231 */
   uint8_t value = readRegisterDS3231();
@@ -63,7 +63,8 @@ void setup() {
   if (!pRTC->begin()) modeState = Mode::ERROR;
   else modeState = Mode::WORK;
 
-  if (pRTC->lostPower()) {  // возвращает true, если 1 января 2000
+  /* If battery is lost power */
+  if (pRTC->lostPower()) {  // return true, if january 1st  2000 year
     modeState = Mode::EDITING;
     menuState = Menu::SET_CLOCK_TIME;
     drawDisplay(menuState, position);
@@ -74,7 +75,7 @@ void rotationSepatator() {
   digitalWrite(MOTOR_RELAY_PIN, LOW);
   while (true) {
     rtn_sens.tick();
-    if (rtn_sens.release()) break;
+    if (rtn_sens.release()) break; // This rotational sensor is triggered to open
     /* Need to cheking a terminator sensitivity */
   }
   digitalWrite(MOTOR_RELAY_PIN, HIGH);
