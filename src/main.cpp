@@ -37,17 +37,18 @@ void ISR_SQW() { isr_sqw_flag = true; }
 void setup() {
   Serial.begin(9600);
 
-  /* Get Alarm timers 1 and 2 */
+  /* Get Alarm timers */
   EEPROM.get(ALARM_1_ADDR, alarm_1);
   EEPROM.get(ALARM_2_ADDR, alarm_2);
-  /* Cheking time's data */
-  timeDataCheck(&alarm_1);
-  timeDataCheck(&alarm_2);
+  /* Checking time's data and if they is incorrect then to change */
+  if (!timeDataCheck(&alarm_1)) EEPROM.put(ALARM_1_ADDR, alarm_1);
+  if (!timeDataCheck(&alarm_2)) EEPROM.put(ALARM_2_ADDR, alarm_2);
 
   /* Reading data from Control Register of RTC DS3231 */
   uint8_t value = readRegisterDS3231();
   /* Allows generating square pulse on SQW pin */
   value &= ~(1 << INTCN_BIT); // Reset the INTCN bit
+  value &= ~((1 << RS1_BIT) | (1 << RS2_BIT)); // Reset the RS bits
   /* Writing data to control register of RTC DS3231 */
   writeRegisterDS3231(value);
 
