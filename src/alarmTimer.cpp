@@ -21,14 +21,13 @@ void writeRegisterDS3231(uint8_t val) {
   Wire.endTransmission();
 }
 
-void timeDataCheck(AlarmTime *pAlarmTime) {
+bool timeDataCheck(AlarmTime *pAlarmTime) {
   if (pAlarmTime->hours > 23 || pAlarmTime->minutes > 59 ||
       pAlarmTime->seconds > 59) {
     pAlarmTime->hours = 0;
     pAlarmTime->minutes = 0;
     pAlarmTime->seconds = 0;
-    /* If wrong data then to reset and to put in EEPROM */
-    if (pAlarmTime == ALARM_1_ADDR) EEPROM.put(ALARM_1_ADDR, pAlarmTime);
-    else EEPROM.put(ALARM_2_ADDR, pAlarmTime);
+    return false;
   }
+  return true;
 }
