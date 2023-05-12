@@ -5,9 +5,9 @@
 #define RTC_I2C_ADDR     0x68
 #define CONTROL_REGISTER 0x0E
 /* Bits of Control register */
-#define INTCN_BIT        2
-#define RS1_BIT          3
-#define RS2_BIT          4
+#define INTCN_BIT        2  // INTerrupt CoNtrol. 0 - SQW(by Meandr), 1 -INT(by Alarm).
+#define RS1_BIT          3  // Rate Select. Controls the frequency of the meandr.
+#define RS2_BIT          4  // RS1 = 0 & RS2 = 0 -> 1kHz.
 
 /*--------------------------| Display settings |-----------------------------*/
 #define DISPLAY_I2C_ADDR            0x3F
