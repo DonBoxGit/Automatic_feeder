@@ -2,7 +2,6 @@
 #define _ALARM_TIME_H_
 
 #include <microDS3231.h>
-#include <EEPROM.h>
 #include "config.h"
 
 extern MicroDS3231 *pRTC;
