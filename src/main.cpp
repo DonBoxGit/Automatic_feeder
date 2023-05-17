@@ -5,8 +5,13 @@
  **************************************************************/
 
 #include <EncButton.h>
-#include <config.h>
+#include <EEPROM.h>
+#include "config.h"
 #include "drawDisplay.h"
+#include "timer_blink.h"
+
+Timer ledIndicatorDuration(LED_INDICATOR_DURATION_MS);
+Timer correctionDrawScreen(SCREN_DRAW_DELAY_MS);
 
 /* Initialization of buttons of control */
 EncButton<EB_TICK, LEFT_BUTTON_PIN>  left_btn   (INPUT_PULLUP);
@@ -48,9 +53,11 @@ void setup() {
   uint8_t value = readRegisterDS3231();
   /* Allows generating square pulse on SQW pin */
   value &= ~(1 << INTCN_BIT); // Reset the INTCN bit
-  value &= ~((1 << RS1_BIT) | (1 << RS2_BIT)); // Reset the RS bits
+  value &= ~((1 << RS1_BIT) | (1 << RS2_BIT));   // Reset the RS bits
+  value &= ~((1 << A1IE_BIT) | (1 << A2IE_BIT)); // Reset the A1IE and A2IE bits
   /* Writing data to control register of RTC DS3231 */
   writeRegisterDS3231(value);
+  Serial.println(value);
 
   /* Allowing an external interrupt on the SQW signal */
   pinMode(2, INPUT_PULLUP); // Input needs to pull up to VCC
@@ -58,6 +65,10 @@ void setup() {
 
   pinMode(MOTOR_RELAY_PIN, OUTPUT);
   digitalWrite(MOTOR_RELAY_PIN, HIGH);
+
+  pinMode(LED_INDICATOR_PIN, OUTPUT);
+  digitalWrite(LED_INDICATOR_PIN, LOW);
+
   pLCD->init();
   pLCD->backlight();
 
@@ -65,7 +76,7 @@ void setup() {
   else modeState = Mode::WORK;
 
   /* If battery is lost power */
-  if (pRTC->lostPower()) {  // return true, if january 1st  2000 year
+  if (pRTC->lostPower()) {  // return true, if january 1st 2000 year
     modeState = Mode::EDITING;
     menuState = Menu::SET_CLOCK_TIME;
     drawDisplay(menuState, position);
@@ -99,8 +110,8 @@ void loop() {
       if (screenStatus) {
         /* Execute every second */
         if (isr_sqw_flag) {
-          printMainScreen();
-          Serial.println("Refresh time on screen.");
+          if (correctionDrawScreen.ready())
+            printMainScreen();
         }
       } else {
         /* Activating the LCD screen by pressing any button */
@@ -110,7 +121,6 @@ void loop() {
           pLCD->display();
           backlightCounter = 0;
           screenStatus = true;
-          Serial.println("Any keys was pressed");
         }
       }
 
@@ -123,8 +133,12 @@ void loop() {
            pRTC->getMinutes() == alarm_2.minutes &&
            pRTC->getSeconds() == alarm_2.seconds)) rotationSepatator();
 
-        ++backlightCounter;
+        backlightCounter++;
         isr_sqw_flag = false;
+        digitalWrite(LED_INDICATOR_PIN, HIGH);
+      } else {
+        if (ledIndicatorDuration.ready())
+          digitalWrite(LED_INDICATOR_PIN, LOW);
       }
 
       /* Entering the calibration mode */
@@ -133,6 +147,8 @@ void loop() {
         pLCD->clear();
         pLCD->setCursor(2, 0);
         pLCD->print("CALIBRATION");
+        pLCD->setCursor(5, 1);
+        pLCD->print("MODE");
       }
 
       /* Entering the settings menu */
@@ -141,6 +157,8 @@ void loop() {
         menuState = Menu::SETTING;
         pLCD->clear();
         drawDisplay(menuState, position);
+        if (digitalRead(LED_INDICATOR_PIN))
+          digitalWrite(LED_INDICATOR_PIN, LOW);
       }
       break;
 
@@ -250,7 +268,6 @@ void loop() {
             pLCD->clear();
           }
         }
-
         drawDisplay(menuState, position);
       }
 
@@ -303,8 +320,4 @@ void loop() {
       while (true);
       break;
   }
-  
-  // вывод температуры чипа
-  // Serial.println(rtc.getTemperatureFloat());  
-  // Serial.println(rtc.getTemperature());
 }
