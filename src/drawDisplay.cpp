@@ -103,7 +103,7 @@ void drawSetActionTime(AlarmTime &alarm, uint8_t item) {
   if (item == 0) pLCD->print("]");
   else pLCD->print(" ");
   pLCD->print(":");
-  
+
   /* Print minutes */
   if (item == 1) pLCD->print("[");
   else pLCD->print(" ");
