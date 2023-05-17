@@ -18,7 +18,7 @@ enum class Menu : uint8_t {
 };
 extern Menu menuState;
 
-void printMainScreen();
+void printMainScreen(void);
 void drawDisplay(const Menu mState = Menu::SETTING, uint8_t item = 0);
 void drawSetActionTime(AlarmTime &alarm, uint8_t item);
 
