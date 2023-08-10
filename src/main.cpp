@@ -13,9 +13,9 @@
 Timer ledIndicatorDuration(LED_INDICATOR_DURATION_MS);
 Timer correctionDrawScreen(SCREN_DRAW_DELAY_MS);
 
-/* Initialization of buttons of control */
-EncButton<EB_TICK, LEFT_BUTTON_PIN>  left_btn   (INPUT_PULLUP);
-EncButton<EB_TICK, RIGHT_BUTTON_PIN> right_btn  (INPUT_PULLUP);
+/* Initialization of buttons for control */
+EncButton<EB_TICK, LEFT_BUTTON_PIN>   left_btn  (INPUT_PULLUP);
+EncButton<EB_TICK, RIGHT_BUTTON_PIN>  right_btn (INPUT_PULLUP);
 EncButton<EB_TICK, SELECT_BUTTON_PIN> select_btn(INPUT_PULLUP);
 EncButton<EB_TICK, CANCEL_BUTTON_PIN> cancel_btn(INPUT_PULLUP);
 /* Initialization of rotation sensor as a button */
@@ -60,7 +60,7 @@ void setup() {
   Serial.println(value);
 
   /* Allowing an external interrupt on the SQW signal */
-  pinMode(2, INPUT_PULLUP); // Input needs to pull up to VCC
+  pinMode(SQW_INPUT_PIN, INPUT_PULLUP);  // Input needs to pull up to VCC
   attachInterrupt(0, ISR_SQW, FALLING);  // INT0 attached
 
   pinMode(MOTOR_RELAY_PIN, OUTPUT);
