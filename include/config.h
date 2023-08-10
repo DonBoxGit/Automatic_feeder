@@ -24,6 +24,7 @@
 #define CANCEL_BUTTON_PIN       12
 #define MOTOR_RELAY_PIN         15
 #define ROTATION_SENSOR_PIN     7
+#define SQW_INPUT_PIN           2
 
 /*---------------------| Addreses of alarms in EEPROM |----------------------*/
 #define ALARM_1_ADDR    0x00
