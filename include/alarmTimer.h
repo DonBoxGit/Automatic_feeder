@@ -14,6 +14,7 @@ struct AlarmTime {
 
 uint8_t readRegisterDS3231(void);
 void writeRegisterDS3231(uint8_t);
+
 /* Function for check correct data in Timers */
 bool timeDataCheck(AlarmTime *);
 
